@@ -1,33 +1,77 @@
 from selenium import webdriver
 import time
-# data store radio button element
-data = []
-# textbox store textbox element
-textbox = {}
-link = input('link : ')
-around = input("How many element in your from : ")
-around = int(around)
-for k in range(around):
-    # you need to coppy xpath and put to element
-    # input element respectively
-    h = input("have textbox : yes , no => ")
-    h2 = input("have button : yes , no => ")
-    if(h=='yes'):
-        element2 = input('xpath textbox : ')
-        keys = input('your answer : ')
-        textbox[element2] = keys
-    elif(h2 == 'yes'):
-        element = input('button , radio element : ')
-        data.append(element)
-loop = input('input your loop : ')
-loop = int(loop)
-for i in range(loop):
-    web = webdriver.Chrome()
-    web.get(link)
-    time.sleep(2)
-    for j in textbox:
-            entry_btn = web.find_element('xpath',j)
-            entry_btn.send_keys(textbox[j])
-    for j in data:
-            first_btn = web.find_element('xpath',j)
-            first_btn.click()
+import random
+
+# Data store radio button elements
+radio_button_elements = []
+
+# Textbox store textbox elements
+textboxes = {}
+link = input('Link: ')
+shuffle_option = input("Do you want to shuffle (y/n)? : ")
+
+if shuffle_option == 'y':
+    element_container = int(input("How many container :"))
+    shuffled_elements = [[] for _ in range(element_container)]
+    print("PLEASE ADD ALL ELEMENTS")
+    print("IF FINISH PLEASE INPUT (end)")
+    while True:
+        textbox_option = input("Do you have a textbox? (yes/no/end): ")
+        if textbox_option == 'end':
+            break
+        if textbox_option == 'yes':
+            element_xpath = input('Xpath of textbox: ')
+            answer = input('Your answer: ')
+            textboxes[element_xpath] = answer
+        else:
+            for m in range(element_container):
+                shuffled_elements[m] = []
+                container_size = int(input("How many items in container: "))
+                for n in range(container_size):
+                    element = input('Button or radio element: ')
+                    shuffled_elements[m].append(element)
+
+    loop_count = input('Input number of loops: ')
+    loop_count = int(loop_count)
+
+    for i in range(loop_count):
+        web = webdriver.Chrome()
+        web.get(link)
+        time.sleep(2)
+        selected_items = [random.choice(sublist) for sublist in shuffled_elements]
+
+        for xpath, answer in textboxes.items():
+            entry_textbox = web.find_element('xpath', xpath)
+            entry_textbox.send_keys(answer)
+
+        for item_xpath in selected_items:
+            element = web.find_element('xpath', item_xpath)
+            element.click()
+        time.sleep(2)
+
+else:
+    element_count = input("How many elements in your form: ")
+    element_count = int(element_count)
+    for k in range(element_count):
+        textbox_option = input("Do you have a textbox? (yes/no): ")
+        button_option = input("Do you have a button? (yes/no): ")
+        if textbox_option == 'yes':
+            textbox_xpath = input('Xpath of textbox: ')
+            answer = input('Your answer: ')
+            textboxes[textbox_xpath] = answer
+        else:
+            element_xpath = input('Button or radio element: ')
+            radio_button_elements.append(element_xpath)
+    loop_count = input('Input number of loops: ')
+    loop_count = int(loop_count)
+
+    for i in range(loop_count):
+        web = webdriver.Chrome()
+        web.get(link)
+        time.sleep(2)
+        for xpath, answer in textboxes.items():
+            entry_textbox = web.find_element('xpath', xpath)
+            entry_textbox.send_keys(answer)
+        for xpath in radio_button_elements:
+            element = web.find_element('xpath', xpath)
+            element.click()
