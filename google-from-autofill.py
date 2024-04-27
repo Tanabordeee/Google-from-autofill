@@ -1,7 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import time
 import random
 
 # Data store radio button elements
@@ -36,19 +34,20 @@ if shuffle_option == 'y':
     loop_count = input('Input number of loops: ')
     loop_count = int(loop_count)
 
-    web = webdriver.Chrome()
-    web.get(link)
-    wait = WebDriverWait(web, 10)
-
     for i in range(loop_count):
+        web = webdriver.Chrome()
+        web.get(link)
+        time.sleep(2)
+        selected_items = [random.choice(sublist) for sublist in shuffled_elements]
+
         for xpath, answer in textboxes.items():
-            entry_textbox = wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
+            entry_textbox = web.find_element('xpath', xpath)
             entry_textbox.send_keys(answer)
 
-        selected_items = [random.choice(sublist) for sublist in shuffled_elements]
         for item_xpath in selected_items:
-            element = wait.until(EC.element_to_be_clickable((By.XPATH, item_xpath)))
+            element = web.find_element('xpath', item_xpath)
             element.click()
+        time.sleep(2)
 
 else:
     element_count = input("How many elements in your form: ")
@@ -66,18 +65,13 @@ else:
     loop_count = input('Input number of loops: ')
     loop_count = int(loop_count)
 
-    web = webdriver.Chrome()
-    web.get(link)
-    wait = WebDriverWait(web, 10)
-
     for i in range(loop_count):
+        web = webdriver.Chrome()
+        web.get(link)
+        time.sleep(2)
         for xpath, answer in textboxes.items():
-            entry_textbox = wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
+            entry_textbox = web.find_element('xpath', xpath)
             entry_textbox.send_keys(answer)
-
         for xpath in radio_button_elements:
-            element = wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            element = web.find_element('xpath', xpath)
             element.click()
-
-# Close the browser session after completion
-web.quit()
