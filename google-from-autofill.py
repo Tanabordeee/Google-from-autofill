@@ -1,4 +1,22 @@
-from selenium import webdriver
+import os
+import subprocess
+import sys
+
+# Define required packages
+required_packages = ['selenium']
+
+# Function to install missing packages
+def install_dependencies():
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", *required_packages])
+
+# Check if dependencies are installed, if not, install them
+try:
+    from selenium import webdriver
+except ImportError:
+    print("Selenium package not found. Installing...")
+    install_dependencies()
+    from selenium import webdriver
+    
 import time
 import random
 
